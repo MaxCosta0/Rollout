@@ -16,165 +16,187 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `atividades`
+-- Table structure for table `atividade`
 --
 
-DROP TABLE IF EXISTS `atividades`;
+DROP TABLE IF EXISTS `atividade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `atividades` (
+CREATE TABLE `atividade` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nome` varchar(255) NOT NULL,
   `Escopo` varchar(255) DEFAULT NULL,
   `Tipo` varchar(255) NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
-  `statusId` int(11) DEFAULT NULL,
-  `estacoId` int(11) DEFAULT NULL,
+  `statusId` int(11) NOT NULL,
+  `estacaoId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `statusId` (`statusId`),
-  KEY `estacoId` (`estacoId`),
-  CONSTRAINT `atividades_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `statuses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `atividades_ibfk_2` FOREIGN KEY (`estacoId`) REFERENCES `estacoes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  KEY `estacaoId` (`estacaoId`),
+  CONSTRAINT `atividade_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `atividade_ibfk_2` FOREIGN KEY (`estacaoId`) REFERENCES `estacao` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `atividades`
+-- Dumping data for table `atividade`
 --
 
-LOCK TABLES `atividades` WRITE;
-/*!40000 ALTER TABLE `atividades` DISABLE KEYS */;
-/*!40000 ALTER TABLE `atividades` ENABLE KEYS */;
+LOCK TABLES `atividade` WRITE;
+/*!40000 ALTER TABLE `atividade` DISABLE KEYS */;
+/*!40000 ALTER TABLE `atividade` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `cidades`
+-- Table structure for table `cidade`
 --
 
-DROP TABLE IF EXISTS `cidades`;
+DROP TABLE IF EXISTS `cidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cidades` (
+CREATE TABLE `cidade` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nome` varchar(255) NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
-  `estadoId` int(11) DEFAULT NULL,
+  `estadoId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `estadoId` (`estadoId`),
-  CONSTRAINT `cidades_ibfk_1` FOREIGN KEY (`estadoId`) REFERENCES `estados` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `cidade_ibfk_1` FOREIGN KEY (`estadoId`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cidades`
+-- Dumping data for table `cidade`
 --
 
-LOCK TABLES `cidades` WRITE;
-/*!40000 ALTER TABLE `cidades` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cidades` ENABLE KEYS */;
+LOCK TABLES `cidade` WRITE;
+/*!40000 ALTER TABLE `cidade` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cidade` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `estacoes`
+-- Table structure for table `estacao`
 --
 
-DROP TABLE IF EXISTS `estacoes`;
+DROP TABLE IF EXISTS `estacao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `estacoes` (
+CREATE TABLE `estacao` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nome` varchar(255) NOT NULL,
   `Escopo` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
-  `statusId` int(11) DEFAULT NULL,
-  `projetoId` int(11) DEFAULT NULL,
-  `cidadeId` int(11) DEFAULT NULL,
+  `statusId` int(11) NOT NULL,
+  `projetoId` int(11) NOT NULL,
+  `cidadeId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `statusId` (`statusId`),
   KEY `projetoId` (`projetoId`),
   KEY `cidadeId` (`cidadeId`),
-  CONSTRAINT `estacoes_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `statuses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `estacoes_ibfk_2` FOREIGN KEY (`projetoId`) REFERENCES `projetos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `estacoes_ibfk_3` FOREIGN KEY (`cidadeId`) REFERENCES `cidades` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `estacao_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `estacao_ibfk_2` FOREIGN KEY (`projetoId`) REFERENCES `projeto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `estacao_ibfk_3` FOREIGN KEY (`cidadeId`) REFERENCES `cidade` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `estacoes`
+-- Dumping data for table `estacao`
 --
 
-LOCK TABLES `estacoes` WRITE;
-/*!40000 ALTER TABLE `estacoes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `estacoes` ENABLE KEYS */;
+LOCK TABLES `estacao` WRITE;
+/*!40000 ALTER TABLE `estacao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `estacao` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `estados`
+-- Table structure for table `estado`
 --
 
-DROP TABLE IF EXISTS `estados`;
+DROP TABLE IF EXISTS `estado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `estados` (
+CREATE TABLE `estado` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nome` varchar(255) NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `estados`
+-- Dumping data for table `estado`
 --
 
-LOCK TABLES `estados` WRITE;
-/*!40000 ALTER TABLE `estados` DISABLE KEYS */;
-/*!40000 ALTER TABLE `estados` ENABLE KEYS */;
+LOCK TABLES `estado` WRITE;
+/*!40000 ALTER TABLE `estado` DISABLE KEYS */;
+/*!40000 ALTER TABLE `estado` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `projetos`
+-- Table structure for table `projeto`
 --
 
-DROP TABLE IF EXISTS `projetos`;
+DROP TABLE IF EXISTS `projeto`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `projetos` (
+CREATE TABLE `projeto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nome` varchar(255) NOT NULL,
   `Escopo` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
-  `statusId` int(11) DEFAULT NULL,
+  `statusId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `statusId` (`statusId`),
-  CONSTRAINT `projetos_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `statuses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `projeto_ibfk_1` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `projetos`
+-- Dumping data for table `projeto`
 --
 
-LOCK TABLES `projetos` WRITE;
-/*!40000 ALTER TABLE `projetos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `projetos` ENABLE KEYS */;
+LOCK TABLES `projeto` WRITE;
+/*!40000 ALTER TABLE `projeto` DISABLE KEYS */;
+/*!40000 ALTER TABLE `projeto` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `statuses`
+-- Table structure for table `status`
 --
 
-DROP TABLE IF EXISTS `statuses`;
+DROP TABLE IF EXISTS `status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `statuses` (
+CREATE TABLE `status` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Descricao` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `status`
+--
+
+LOCK TABLES `status` WRITE;
+/*!40000 ALTER TABLE `status` DISABLE KEYS */;
+/*!40000 ALTER TABLE `status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `usuario` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Nome` varchar(255) NOT NULL,
+  `Matricula` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Senha` varchar(255) NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -182,12 +204,12 @@ CREATE TABLE `statuses` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `statuses`
+-- Dumping data for table `usuario`
 --
 
-LOCK TABLES `statuses` WRITE;
-/*!40000 ALTER TABLE `statuses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `statuses` ENABLE KEYS */;
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -199,4 +221,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-11 20:24:45
+-- Dump completed on 2019-11-12 15:43:14
