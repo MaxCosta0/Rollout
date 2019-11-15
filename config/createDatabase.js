@@ -1,10 +1,10 @@
-const Atividade = require('./Atividade');
-const Cidade = require('./Cidade');
-const Estacao = require('./Estacao');
-const Estado = require('./Estado');
-const Projeto = require('./Projeto');
-const Status = require('./Status');
-const Usuario = require('./Usuario');
+const Atividade = require('../models/atividade');
+const Cidade = require('../models/cidade');
+const Estacao = require('../models/estacao');
+const Estado = require('../models/estado');
+const Projeto = require('../models/projeto');
+const Status = require('../models/status');
+const Usuario = require('../models/usuario');
 
 const db = require('./connection');
 

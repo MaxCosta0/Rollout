@@ -1,4 +1,4 @@
-const db = require('./connection');
+const db = require('../config/connection');
 
 const Atividade = db.sequelize.define('atividade', {
     Nome: {type: db.Sequelize.STRING, allowNull: false},

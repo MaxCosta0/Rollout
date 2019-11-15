@@ -1,7 +1,4 @@
-const db = require('./connection');
-const Status = require('./Status');
-const Projeto = require('./Projeto');
-const Cidade = require('./Cidade');
+const db = require('../config/connection');
 
 const Estacao = db.sequelize.define('estacao', {
     Nome: {type: db.Sequelize.STRING, allowNull: false},

@@ -1,4 +1,4 @@
-const db = require('./connection');
+const db = require('../config/connection');
 
 const Usuario = db.sequelize.define('usuario', {
     Nome: {type: db.Sequelize.STRING, allowNull: false},
