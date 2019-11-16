@@ -3,7 +3,15 @@
 const express = require('express');
 const BodyParser = require('body-parser');
 const app = express();
-const usuario = require('./routes/usuario')
+const usuario = require('./routes/usuario');
+const projeto = require('./routes/projeto');
+const status = require('./routes/status');
+const estacao = require('./routes/estacao');
+const atividade = require('./routes/atividade');
+const cidade = require('./routes/cidade');
+const estado = require('./routes/estado');
+
+//const routes = require('./routes');
 
 let port = 3000;
 
@@ -15,6 +23,14 @@ app.get('/', function(req, res){
 });
 
 app.use(usuario);
+app.use(projeto);
+app.use(status);
+app.use(estacao);
+app.use(atividade);
+app.use(cidade);
+app.use(estado);
+
+
 
 app.listen(port, function(err){
     if(!err){
