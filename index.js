@@ -8,6 +8,7 @@ const app = express();
 app.disable('X-Powered-By') // para segurança do express, desabilita cabeçalho X-Powered-By
 
 const usuario = require('./routes/usuario')
+const estado = require('./routes/estado')
 
 let port = 3000;
 
@@ -20,6 +21,7 @@ app.get('/', function(req, res){
 });
 
 app.use(usuario);
+app.use(estado);
 
 app.listen(port, function(err){
     if(!err){
