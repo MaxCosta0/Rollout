@@ -14,7 +14,7 @@ exports.create = function(req, res){
 };
 
 exports.details = function(req, res){
-    Usuario.findById(req.params.id).then(function(usuario){
+    Usuario.findOne({ id: req.params.id }).then(function(usuario){
         res.send(usuario);
     }).catch(function(err){
         res.send(err);
