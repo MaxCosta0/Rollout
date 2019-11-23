@@ -2,11 +2,16 @@
 
 const express = require('express');
 const BodyParser = require('body-parser');
+const helmet = require('helmet')
+
 const app = express();
+app.disable('X-Powered-By') // para segurança do express, desabilita cabeçalho X-Powered-By
+
 const usuario = require('./routes/usuario')
 
 let port = 3000;
 
+app.use(helmet()) // para segurança do express contra vunerabilidades http
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true}));
 

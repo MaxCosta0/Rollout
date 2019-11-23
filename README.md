@@ -6,5 +6,5 @@
 # Configurando o ambiente de desenvolvimento
 <br>Entre na Pasta clonada e digite os seguintes comandos:</br>
 <br>npm init</br>
-<br>npm install --save express, sequelize, mysql2, body-parser</br>
+<br>npm install --save express sequelize mysql2 body-parser</br>
 <br>npm install</br>
