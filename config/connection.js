@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('rollout', 'root', 'Password', {
-    hots: 'localhost',
+    host: 'localhost',
     dialect: 'mysql'
 });
 
