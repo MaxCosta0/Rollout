@@ -1,8 +1,8 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('rollout', 'root', '12345', {
-    hots: 'localhost',
+const sequelize = new Sequelize('rollout', 'root', 'Password', {
+    host: 'localhost',
     dialect: 'mysql'
 });
 

@@ -1,53 +1,50 @@
-const Usuario = require('../models/usuario');
+const Atividade = require('../models/atividade');
 
 exports.create = function(req, res){
-    Usuario.create({
+   Atividade.create({
         Nome: req.body.Nome,
-        Matricula: req.body.Matricula,
-        Email: req.body.Email,
-        Senha: req.body.Senha
-    }).then(function(usuario){
-        res.send(usuario);
+        Escopo: req.body.Escopo,
+        Tipo: req.body.Tipo
+    }).then(function(atividade){
+        res.send(atividade);
     }).catch(function(err){
         res.send(err);
     });
 };
 
-
 exports.findOne = function(req, res){
-    Usuario.findById(req.params.id).then(function(usuario){
-        res.send(usuario);
+    Atividade.findById(req.params.id).then(function(atividade){
+        res.send(atividade);
     }).catch(function(err){
         res.send(err);
     });
 };
 
 exports.findAll = function(req, res){
-    Usuario.findAll().then(function(usuarios){
-        res.send(usuarios);
+    Atividade.findAll().then(function(atividades){
+        res.send(atividades);
     }).catch(function(err){
         res.send(err);
     });
 };
 
 exports.update = function(req, res){
-    Usuario.update({
+    Atividade.update({
         Nome: req.body.Nome,
-        Matricula: req.body.Matricula,
-        Email: req.body.Email,
-        Senha: req.body.Senha
+        Escopo: req.body.Escopo,
+        Tipo: req.body.Tipo
     }, {where: {id: req.params.id}}).then(function(){
-        res.status(200).send('Usuario atualizado com sucesso.');
+        res.status(200).send('Atividade atualizada com sucesso.');
     }).catch(function(err){
         res.send(err);
     });
 };
 
 exports.delete = function(req, res){
-    Usuario.destroy({
+    Atividade.destroy({
         where: {id: req.params.id}
     }).then(function(){
-        res.status(200).send('Usuario deletado com sucesso');
+        res.status(200).send('Ativiidade deletada com sucesso');
     }).catch(function(err){
         res.send(err);
     });
