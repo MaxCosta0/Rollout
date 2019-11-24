@@ -13,6 +13,7 @@ exports.create = function(req, res){
     });
 };
 
+
 exports.findOne = function(req, res){
     Usuario.findById(req.params.id).then(function(usuario){
         res.send(usuario);

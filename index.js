@@ -2,7 +2,10 @@
 
 const express = require('express');
 const BodyParser = require('body-parser');
+const helmet = require('helmet')
+
 const app = express();
+
 
 const usuario = require('./routes/usuario');
 const projeto = require('./routes/projeto');
@@ -12,8 +15,11 @@ const atividade = require('./routes/atividade');
 const cidade = require('./routes/cidade');
 const estado = require('./routes/estado');
 
+app.disable('X-Powered-By') // para segurança do express, desabilita cabeçalho X-Powered-By
+
 let port = 3000;
 
+app.use(helmet()) // para segurança do express contra vunerabilidades http
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true}));
 
