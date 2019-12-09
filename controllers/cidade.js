@@ -19,7 +19,14 @@ exports.findOne = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    Cidade.findAll().then(function(cidades){
+    //Pagination: 5 elements per page.
+    const limit = 5; 
+    const offset = (parseInt(req.params.page) - 1) * limit;
+
+    Cidade.findAll({
+        offset, 
+        limit
+    }).then(function(cidades){
         res.send(cidades);
     }).catch(function(err){
         res.send(err);

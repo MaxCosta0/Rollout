@@ -22,7 +22,14 @@ exports.findOne = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    Usuario.findAll().then(function(usuarios){
+    //Pagination: 5 elements per page.
+    const limit = 5; 
+    const offset = (parseInt(req.params.page) - 1) * limit;
+
+    Usuario.findAll({
+        offset,
+        limit        
+    }).then(function(usuarios){
         res.send(usuarios);
     }).catch(function(err){
         res.send(err);

@@ -21,7 +21,14 @@ exports.findOne = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    Atividade.findAll().then(function(atividades){
+    //Pagination: 5 elements per page.
+    const limit = 5; 
+    const offset = (parseInt(req.params.page) - 1) * limit;
+
+    Atividade.findAll({
+        offset,
+        limit
+    }).then(function(atividades){
         res.send(atividades);
     }).catch(function(err){
         res.send(err);

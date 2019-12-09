@@ -19,7 +19,14 @@ exports.findOne = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    Status.findAll().then(function(status){
+    //Pagination: 5 elements per page.
+    const limit = 5; 
+    const offset = (parseInt(req.params.page) - 1) * limit;
+
+    Status.findAll({
+        offset, 
+        limit
+    }).then(function(status){
         res.send(status);
     }).catch(function(err){
         res.send(err);

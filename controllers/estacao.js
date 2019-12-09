@@ -20,7 +20,14 @@ exports.findOne = function(req, res){
 };
 
 exports.findAll = function(req, res){
-    Estacao.findAll().then(function(estacoes){
+    //Pagination: 5 elements per page.
+    const limit = 5; 
+    const offset = (parseInt(req.params.page) - 1) * limit;
+
+    Estacao.findAll({
+        offset,
+        limit
+    }).then(function(estacoes){
         res.send(estacoes);
     }).catch(function(err){
         res.send(err);
