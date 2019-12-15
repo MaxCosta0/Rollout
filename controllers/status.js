@@ -1,47 +1,58 @@
+/**
+ * @author Breno Henrique de Oliveira Ferreira
+ * @date Dec/14/2019
+ */
 const Status = require('../models/status');
 
-exports.create = function(req, res){
-    Status.create({
-        Descricao: req.body.Descricao
-    }).then(function(status){
-        res.send(status);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+module.exports = {
+    create(req, res) {
+        const { Descricao } = req.body
+        Status.create({ Descricao })
+            .then( status => res.json(status))
+            .catch( err => res.json(err))
+    },
 
-exports.findOne = function(req, res){
-    Status.findById(req.params.id).then(function(status){
-        res.send(status);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    findOne(req, res) {
+        const { id } = req.params
+        Status.findOne({ id })
+            .then( status => res.json(status))
+            .catch( err => res.json(err))
+    },
+    
+    findAll(req, res) {
+        const limit = 5; 
+        const offset = (parseInt(req.params.page) - 1) * limit;
 
-exports.findAll = function(req, res){
-    Status.findAll().then(function(status){
-        res.send(status);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+        Status.findAll({
+            offset,
+            limit
+        })
+            .then( status => res.json(status))
+            .catch( err => res.json(err))
+    },
 
-exports.update = function(req, res){
-    Status.update({
-        Descricao: req.body.Descricao
-    }, {where: {id: req.params.id}}).then(function(status){
-        res.status(200).send('Status atualizado com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    update(req, res) {
+        const { Descricao } = req.body
+        const { id } = req.params
+        Status.update({ Descricao }, {where: {id}})
+            .then( status => {
+                if (status[0] !== 0)
+                    res.status(200).json({ result: "Status atualizado com sucesso."})
+                else
+                    res.status(200).json({ result: "Status não encontrado."})
+            })
+            .catch( err => res.json(err))
+    },
 
-exports.delete = function(req, res){
-    Status.destroy({
-        where: {id: req.params.id}
-    }).then(function(status){
-        res.status(200).send('Status deletado com sucesso');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    delete(req, res) {
+        const { id } = req.params
+        Status.destroy({where: {id}})
+            .then( status => {
+                if (status !== 0)
+                    res.status(200).json({ result: "Status deletado com sucesso."})
+                else
+                    res.status(200).json({ result: "Status não encontrado."})
+            })
+            .catch( err => res.json(err))
+    }
+}
