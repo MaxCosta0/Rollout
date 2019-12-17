@@ -1,56 +1,55 @@
+"use strict"
 const Projeto = require('../models/projeto');
 
-exports.create = function(req, res){
-    Projeto.create({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo
-    }).then(function(projeto){
-        res.send(projeto);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+module.exports = {
+    create(req, res) {
+        const { Nome, Escopo } = req.body
+        Projeto.create({ Nome, Escopo })
+            .then( projeto => res.json(projeto))
+            .catch( err => res.json(err))
+    },
 
-exports.findOne = function(req, res){
-    Projeto.findById(req.params.id).then(function(projeto){
-        res.send(projeto);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    findOne(req, res) {
+        const { id } = req.params
+        Projeto.findOne({ id })
+            .then( projeto => res.json(projeto))
+            .catch( err => res.json(err))
+    },
+    
+    findAll(req, res) {
+        const limit = 5; 
+        const offset = (parseInt(req.params.page) - 1) * limit;
 
-exports.findAll = function(req, res){
-    //Pagination: 5 elements per page.
-    const limit = 5; 
-    const offset = (parseInt(req.params.page) - 1) * limit;
+        Projeto.findAll({
+            offset,
+            limit
+        })
+            .then( projetos => res.json(projetos))
+            .catch( err => res.json(err))
+    },
 
-    Projeto.findAll({
-        offset,
-        limit
-    }).then(function(projetos){
-        res.send(projetos);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    update(req, res) {
+        const { Nome, Escopo } = req.body
+        const { id } = req.params
+        Projeto.update({ Nome, Escopo }, {where: {id}})
+            .then( projeto => {
+                if (projeto[0] !== 0)
+                    res.status(200).json({ result: "Projeto atualizado com sucesso."})
+                else
+                    res.status(200).json({ result: "Projeto não encontrado."})
+            })
+            .catch( err => res.json(err))
+    },
 
-exports.update = function(req, res){
-    Projeto.update({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo
-    }, {where: {id: req.params.id}}).then(function(projeto){
-        res.status(200).send('Projeto atualizado com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
-
-exports.delete = function(req, res){
-    Projeto.destroy({
-        where: {id: req.params.id}
-    }).then(function(req, res){
-        res.status(200).send('Projeto deletado com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    delete(req, res) {
+        const { id } = req.params
+        Projeto.destroy({where: {id}})
+            .then( projeto => {
+                if (projeto !== 0)
+                    res.status(200).json({ result: "Projeto deletado com sucesso."})
+                else
+                    res.status(200).json({ result: "Projeto não encontrado."})
+            })
+            .catch( err => res.json(err))
+    }
+}
