@@ -11,13 +11,13 @@ module.exports = {
 
     findOne(req, res) {
         const { id } = req.params
-        Estado.findOne({ id })
+        Estado.findOne({where: { id }})
             .then( estado => res.json(estado))
             .catch( err => res.json(err))
     },
     
     findAll(req, res) {
-        const limit = 5; 
+        const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
 
         Estado.findAll({

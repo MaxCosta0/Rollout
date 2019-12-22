@@ -10,8 +10,8 @@ module.exports = {
     },
 
     findOne(req, res) {
-        //const { id } = req.params
-        Usuario.findOne({where: {id: req.params.id}})
+        const { id } = req.params
+        Usuario.findOne({where: {id}})
             .then( usuario => res.json(usuario))
             .catch( err => res.json(err))
     },

@@ -3,21 +3,21 @@ const Projeto = require('../models/projeto');
 
 module.exports = {
     create(req, res) {
-        const { Nome, Escopo } = req.body
-        Projeto.create({ Nome, Escopo })
+        const { Nome, Escopo, statusId } = req.body
+        Projeto.create({ Nome, Escopo, statusId })
             .then( projeto => res.json(projeto))
             .catch( err => res.json(err))
     },
 
     findOne(req, res) {
         const { id } = req.params
-        Projeto.findOne({ id })
+        Projeto.findOne({where: { id }})
             .then( projeto => res.json(projeto))
             .catch( err => res.json(err))
     },
     
     findAll(req, res) {
-        const limit = 5; 
+        const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
 
         Projeto.findAll({
@@ -29,9 +29,9 @@ module.exports = {
     },
 
     update(req, res) {
-        const { Nome, Escopo } = req.body
+        const { Nome, Escopo, statusId } = req.body
         const { id } = req.params
-        Projeto.update({ Nome, Escopo }, {where: {id}})
+        Projeto.update({Nome, Escopo, statusId }, {where: {id}})
             .then( projeto => {
                 if (projeto[0] !== 0)
                     res.status(200).json({ result: "Projeto atualizado com sucesso."})
