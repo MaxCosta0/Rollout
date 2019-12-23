@@ -197,6 +197,7 @@ CREATE TABLE `usuario` (
   `Matricula` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Senha` varchar(255) NOT NULL,
+  'isVerified' boolean NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`)

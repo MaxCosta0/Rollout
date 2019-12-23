@@ -1,0 +1,32 @@
+{
+  "name": "rollout",
+  "version": "1.0.0",
+  "description": "<br>1-click em clone or download.</br> <br>2-salve a url.</br> <br>3-Digite o seguinte comando no terminal: git clone (*cole a url salva*)</br>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxCosta0/Rollout.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxCosta0/Rollout/issues"
+  },
+  "homepage": "https://github.com/MaxCosta0/Rollout#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.7",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "helmet": "^3.21.2",
+    "jwt-simple": "^0.5.6",
+    "mysql2": "^2.0.2",
+    "nodemailer": "^6.4.2",
+    "sequelize": "^5.21.3"
+  }
+}
