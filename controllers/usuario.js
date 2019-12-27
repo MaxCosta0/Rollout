@@ -33,6 +33,7 @@ exports.create = function(req, res){
                             Matricula: req.body.Matricula,
                             Email: req.body.Email,
                             Senha: hash,
+                            loggedin: false,
                             isVerified: false
                         }).catch(function(err){
                             res.send(err);
@@ -213,10 +214,10 @@ exports.delete = function(req, res){
 };
 
 exports.login = function(req, res){
-    nomeBody = req.body.Nome
-    matriculaBody = req.body.Matricula
-    emailBody = req.body.Email
-    senhaBody = req.body.Senha
+    nomeBody = req.body.Nome;
+    matriculaBody = req.body.Matricula;
+    emailBody = req.body.Email;
+    senhaBody = req.body.Senha;
 
     Usuario.findOne({
         where: {
@@ -228,7 +229,14 @@ exports.login = function(req, res){
                 try{
                     bcrypt.compare(senhaBody, usuario.Senha, function(err, resposta){       // Se a senha de entrada for igual a senha do db (encriptada), o login sera permitido, caso contrario, o login nao sera permitido
                         if(resposta){
-                            res.send({authorizedLogin: true});
+                            Usuario.update({
+                                loggedin: true
+                            }, {where: {Matricula: matriculaBody}}).then(function(){
+                                res.send({authorizedLogin: true});
+                            }).catch(function(err){
+                                res.send(err);
+                            });
+
                         }else{
                             res.send({authorizedLogin: false});                   
                         }
@@ -241,6 +249,27 @@ exports.login = function(req, res){
             }
         }else{
             res.send({loginError: "Conta inexistente"});
+        }
+    })
+}
+
+exports.logout = function(req, res){
+    matriculaBody = req.body.Matricula;
+    Usuario.findOne({
+        where: {
+            Matricula: matriculaBody
+        }
+    }).then(function(usuario){
+        if(!usuario.loggedin)                                                           // Verificacao para saber se o usuario esta conectado ou nao
+            res.send({error: "Login Error", errorType: "Usuario nao conectado"});
+        else{
+            Usuario.update({
+                loggedin: false
+            }, {where: {Matricula: matriculaBody}}).then(function(){
+                res.send({loggedin: false});
+            }).catch(function(err){
+                res.send(err);
+            });
         }
     })
 }
