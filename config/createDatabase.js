@@ -1,3 +1,4 @@
+"use strict"
 const Atividade = require('../models/atividade');
 const Cidade = require('../models/cidade');
 const Estacao = require('../models/estacao');

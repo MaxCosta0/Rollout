@@ -3,21 +3,21 @@ const Estacao = require('../models/estacao');
 
 module.exports = {
     create(req, res) {
-        const { Nome, Escopo } = req.body
-        Estacao.create({ Nome, Escopo })
+        const { Nome, Escopo, cidadeId, projetoId, statusId } = req.body
+        Estacao.create({ Nome, Escopo, cidadeId, projetoId, statusId })
             .then( estacao => res.json(estacao))
             .catch( err => res.json(err))
     },
 
     findOne(req, res) {
         const { id } = req.params
-        Estacao.findOne({ id })
+        Estacao.findOne({where: { id }})
             .then( estacao => res.json(estacao))
             .catch( err => res.json(err))
     },
     
     findAll(req, res) {
-        const limit = 5; 
+        const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
 
         Estacao.findAll({
@@ -29,9 +29,9 @@ module.exports = {
     },
 
     update(req, res) {
-        const { Nome,Escopo } = req.body
+        const {  Nome, Escopo, cidadeId, projetoId, statusId } = req.body
         const { id } = req.params
-        Estacao.update({ Nome, Escopo }, {where: {id}})
+        Estacao.update({  Nome, Escopo, cidadeId, projetoId, statusId }, {where: {id}})
             .then( estacao => {
                 if (estacao[0] !== 0)
                     res.status(200).json({ result: "Estação atualizaa com sucesso."})

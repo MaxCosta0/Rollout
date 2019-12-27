@@ -195,6 +195,7 @@ exports.update = function(req, res){
         Matricula: req.body.Matricula,
         Email: req.body.Email,
         Senha: req.body.Senha,
+        isVerified: req.body.isVerified
     }, {where: {id: req.params.id}}).then(function(){
         res.status(200).send('Usuario atualizado com sucesso.');
     }).catch(function(err){
@@ -235,6 +236,7 @@ exports.login = function(req, res){
                             }).catch(function(err){
                                 res.send(err);
                             });
+
                         }else{
                             res.send({authorizedLogin: false});                   
                         }
