@@ -1,47 +1,55 @@
+"use strict"
 const Cidade = require('../models/cidade');
 
-exports.create = function(req, res){
-   Cidade.create({
-        Nome: req.body.Nome
-    }).then(function(cidade){
-        res.send(cidade);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+module.exports = {
+    create(req, res) {
+        const { Nome, estadoId } = req.body
+        Cidade.create({ Nome, estadoId })
+            .then( cidade => res.json(cidade))
+            .catch( err => res.json(err))
+    },
 
-exports.findOne = function(req, res){
-    Cidade.findById(req.params.id).then(function(cidade){
-        res.send(cidade);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    findOne(req, res) {
+        const { id } = req.params
+        Cidade.findOne({where: { id }})
+            .then( cidade => res.json(cidade))
+            .catch( err => res.json(err))
+    },
+    
+    findAll(req, res) {
+        const limit = 10; 
+        const offset = (parseInt(req.params.page) - 1) * limit;
 
-exports.findAll = function(req, res){
-    Cidade.findAll().then(function(cidades){
-        res.send(cidades);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+        Cidade.findAll({
+            offset,
+            limit
+        })
+            .then( cidades => res.json(cidades))
+            .catch( err => res.json(err))
+    },
 
-exports.update = function(req, res){
-    Cidade.update({
-        Nome: req.body.Nome
-    }, {where: {id: req.params.id}}).then(function(){
-        res.status(200).send('Cidade atualizada com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    update(req, res) {
+        const { Nome, estadoId } = req.body
+        const { id } = req.params
+        Cidade.update({ Nome, estadoId }, {where: {id}})
+            .then( cidade => {
+                if (cidade[0] !== 0)
+                    res.status(200).json({ result: "Cidade atualizaa com sucesso."})
+                else
+                    res.status(200).json({ result: "Cidade não encontrada."})
+            })
+            .catch( err => res.json(err))
+    },
 
-exports.delete = function(req, res){
-    Cidade.destroy({
-        where: {id: req.params.id}
-    }).then(function(){
-        res.status(200).send('Cidade deletada com sucesso');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    delete(req, res) {
+        const { id } = req.params
+        Cidade.destroy({where: {id}})
+            .then( cidade => {
+                if (cidade !== 0)
+                    res.status(200).json({ result: "Cidade deletada com sucesso."})
+                else
+                    res.status(200).json({ result: "Cidade não encontrada."})
+            })
+            .catch( err => res.json(err))
+    }
+}

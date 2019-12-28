@@ -1,51 +1,55 @@
-const Atividade = require('../models/atividade');
+"use strict"
+const Atividade = require('../models/atividade')
 
-exports.create = function(req, res){
-   Atividade.create({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo,
-        Tipo: req.body.Tipo
-    }).then(function(atividade){
-        res.send(atividade);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+module.exports = {
+    create(req, res) {
+        const { Nome, Escopo, Tipo, estacaoId, statusId } = req.body
+        Atividade.create({ Nome, Escopo, Tipo, estacaoId, statusId })
+            .then( atividade => res.json(atividade))
+            .catch( err => res.json(err))
+    },
 
-exports.findOne = function(req, res){
-    Atividade.findById(req.params.id).then(function(atividade){
-        res.send(atividade);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    findOne(req, res) {
+        const { id } = req.params
+        Atividade.findOne({where:{ id }})
+            .then( atividade => res.json(atividade))
+            .catch( err => res.json(err))
+    },
+    
+    findAll(req, res) {
+        const limit = 10; 
+        const offset = (parseInt(req.params.page) - 1) * limit;
 
-exports.findAll = function(req, res){
-    Atividade.findAll().then(function(atividades){
-        res.send(atividades);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+        Atividade.findAll({
+            offset,
+            limit
+        })
+            .then( atividades => res.json(atividades))
+            .catch( err => res.json(err))
+    },
 
-exports.update = function(req, res){
-    Atividade.update({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo,
-        Tipo: req.body.Tipo
-    }, {where: {id: req.params.id}}).then(function(){
-        res.status(200).send('Atividade atualizada com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    update(req, res) {
+        const { Nome, Escopo, Tipo, estacaoId, statusId } = req.body
+        const { id } = req.params
+        Atividade.update({ Nome, Escopo, Tipo, estacaoId, statusId }, {where: {id}})
+            .then( atividade => {
+                if (atividade[0] !== 0)
+                    res.status(200).json({ result: "Atividade atualizada com sucesso."})
+                else
+                    res.status(200).json({ result: "Atividade não encontrada."})
+            })
+            .catch( err => res.json(err))
+    },
 
-exports.delete = function(req, res){
-    Atividade.destroy({
-        where: {id: req.params.id}
-    }).then(function(){
-        res.status(200).send('Ativiidade deletada com sucesso');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    delete(req, res) {
+        const { id } = req.params
+        Atividade.destroy({where: {id}})
+            .then( atividade => {
+                if (atividade !== 0)
+                    res.status(200).json({ result: "Atividade deletada com sucesso."})
+                else
+                    res.status(200).json({ result: "Atividade não encontrada."})
+            })
+            .catch( err => res.json(err))
+    }
+}

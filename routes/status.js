@@ -5,7 +5,7 @@ let controller = require('../controllers/status');
 
 router.post('/status/create', controller.create);
 router.get('/status/:id', controller.findOne);
-router.get('/status', controller.findAll);
+router.get('/statuses/:page', controller.findAll);
 router.put('/status/:id/update', controller.update);
 router.delete('/status/:id/delete',controller.delete);
 

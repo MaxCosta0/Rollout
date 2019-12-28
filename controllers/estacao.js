@@ -1,49 +1,55 @@
+"use strict"
 const Estacao = require('../models/estacao');
 
-exports.create = function(req, res){
-   Estacao.create({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo
-    }).then(function(estacao){
-        res.send(estacao);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+module.exports = {
+    create(req, res) {
+        const { Nome, Escopo, cidadeId, projetoId, statusId } = req.body
+        Estacao.create({ Nome, Escopo, cidadeId, projetoId, statusId })
+            .then( estacao => res.json(estacao))
+            .catch( err => res.json(err))
+    },
 
-exports.findOne = function(req, res){
-    Estacao.findById(req.params.id).then(function(estacao){
-        res.send(estacao);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    findOne(req, res) {
+        const { id } = req.params
+        Estacao.findOne({where: { id }})
+            .then( estacao => res.json(estacao))
+            .catch( err => res.json(err))
+    },
+    
+    findAll(req, res) {
+        const limit = 10; 
+        const offset = (parseInt(req.params.page) - 1) * limit;
 
-exports.findAll = function(req, res){
-    Estacao.findAll().then(function(estacoes){
-        res.send(estacoes);
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+        Estacao.findAll({
+            offset,
+            limit
+        })
+            .then( estacoes => res.json(estacoes))
+            .catch( err => res.json(err))
+    },
 
-exports.update = function(req, res){
-    Estacao.update({
-        Nome: req.body.Nome,
-        Escopo: req.body.Escopo
-    }, {where: {id: req.params.id}}).then(function(){
-        res.status(200).send('Estacao atualizada com sucesso.');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    update(req, res) {
+        const {  Nome, Escopo, cidadeId, projetoId, statusId } = req.body
+        const { id } = req.params
+        Estacao.update({  Nome, Escopo, cidadeId, projetoId, statusId }, {where: {id}})
+            .then( estacao => {
+                if (estacao[0] !== 0)
+                    res.status(200).json({ result: "Estação atualizaa com sucesso."})
+                else
+                    res.status(200).json({ result: "Estação não encontrada."})
+            })
+            .catch( err => res.json(err))
+    },
 
-exports.delete = function(req, res){
-    Estacao.destroy({
-        where: {id: req.params.id}
-    }).then(function(){
-        res.status(200).send('Estacao deletada com sucesso');
-    }).catch(function(err){
-        res.send(err);
-    });
-};
+    delete(req, res) {
+        const { id } = req.params
+        Estacao.destroy({where: {id}})
+            .then( estacao => {
+                if (estacao !== 0)
+                    res.status(200).json({ result: "Estação deletada com sucesso."})
+                else
+                    res.status(200).json({ result: "Estação não encontrada."})
+            })
+            .catch( err => res.json(err))
+    }
+}

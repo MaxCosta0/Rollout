@@ -197,6 +197,10 @@ CREATE TABLE `usuario` (
   `Matricula` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Senha` varchar(255) NOT NULL,
+<<<<<<< HEAD
+=======
+  `loggedin` boolean NOT NULL,
+>>>>>>> 0aecb0535a828a5b8b92a6bd2654897324c85de4
   'isVerified' boolean NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
