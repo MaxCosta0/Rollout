@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "rollout",
   "version": "1.0.0",
   "description": "<br>1-click em clone or download.</br> <br>2-salve a url.</br> <br>3-Digite o seguinte comando no terminal: git clone (*cole a url salva*)</br>",
@@ -29,27 +28,5 @@
     "mysql2": "^2.0.2",
     "nodemailer": "^6.4.2",
     "sequelize": "^5.21.3"
-=======
-  "name": "rollout-system",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^3.1.0",
-    "helmet": "^3.21.2",
-    "mysql2": "^2.0.0",
-    "require-dir": "^1.2.0",
-    "sequelizer": "^1.1.3"
->>>>>>> 0aecb0535a828a5b8b92a6bd2654897324c85de4
   }
 }
