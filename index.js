@@ -2,7 +2,8 @@
 const express = require('express');
 const BodyParser = require('body-parser');
 const helmet = require('helmet');
-
+const cors = require('cors');
+// npm intall cors
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.disable('X-Powered-By') // para segurança do express, desabilita cabeçalho
 app.use(helmet()) // para segurança do express contra vunerabilidades http
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true}));
+//using cors
+app.use(cors());
 
 app.use(usuario);
 app.use(projeto);
@@ -27,6 +30,15 @@ app.use(estacao);
 app.use(atividade);
 app.use(cidade);
 app.use(estado);
+
+const alunos = [{
+    nome: 'a1',
+    idade: 12
+}]
+
+app.get('/usuario', function (req, res) { //endereco da requisicao onde e retornado hello world
+    res.send(alunos)
+})
 
 let port = 3000;
 app.listen(port, function(err){
