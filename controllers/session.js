@@ -3,6 +3,24 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jwt-simple');
 const chaveSecreta = 'chavesecreta';                                              // Trocar a chaveSecreta
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+const passportLocal = require('passport-local').Strategy;
+
+exports.teste = function(req, res, next){
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+          return next(err);
+        }
+        if (!user) {
+          return res.status(400).send("Cannot log in");
+        }
+    
+        req.login(user, err => {
+          res.send("Logged in");
+        });
+      })(req, res, next);
+}
 
 exports.login = function (req, res) {
     nomeBody = req.body.Nome;
