@@ -3,6 +3,7 @@ const express = require('express');
 const BodyParser = require('body-parser');
 const helmet = require('helmet');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 // npm intall cors
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true}));
 //using cors
 app.use(cors());
+app.use(cookieParser());
 
 app.use(usuario);
 app.use(projeto);

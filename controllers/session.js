@@ -3,63 +3,70 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jwt-simple');
 const chaveSecreta = 'chavesecreta';                                              // Trocar a chaveSecreta
-const passport = require('passport');
-const cookieSession = require('cookie-session');
-const passportLocal = require('passport-local').Strategy;
+const cookieParser = require('cookie-parser');
 
-exports.teste = function(req, res, next){
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-          return next(err);
-        }
-        if (!user) {
-          return res.status(400).send("Cannot log in");
-        }
-    
-        req.login(user, err => {
-          res.send("Logged in");
-        });
-      })(req, res, next);
-}
+const loginHost = 'http://localhost:8080/';
 
 exports.login = function (req, res) {
-    nomeBody = req.body.Nome;
-    matriculaBody = req.body.Matricula;
-    emailBody = req.body.Email;
-    senhaBody = req.body.Senha;
-
-    Usuario.findOne({
-        where: {
-            Matricula: matriculaBody
+    
+    if(req.cookies['userData'] != null){                                                          // Se possui cookie armazenado, faz o login com o cookie
+        var token = req.cookies['userData'];
+        var dataDecoded = jwt.decode(token, chaveSecreta);
+        if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
+            res.json({ authorizedLogin: true, loginType: 'token' });
+        } else {
+            res.json({ error: "Token expirado" });
         }
-    }).then(function (usuario) {
-        if (usuario != null) {                                                                // Se retorno usuario for null, usuario nao existe
-            if (usuario.isVerified) {                                                         // Verifica se a conta ja foi ativada
-                try {
-                    bcrypt.compare(senhaBody, usuario.Senha, function (err, resposta) {       // Se a senha de entrada for igual a senha do db (encriptada), o login sera permitido, caso contrario, o login nao sera permitido
-                        if (resposta) {
-                            Usuario.update({
-                                loggedin: true
-                            }, { where: { Matricula: matriculaBody } }).then(function () {
-                                res.json({ authorizedLogin: true });
-                            }).catch(function (err) {
-                                res.json(err);
-                            });
+    }else{                                                                                        // Se nao possui o cookie, faz a verificacao por meio dos campos passados pelo fron-end
+        // nomeBody = req.body.Nome;
+        matriculaBody = req.body.Matricula;
+        // emailBody = req.body.Email;
+        senhaBody = req.body.Senha;
+        lembrarBody = req.body.LembrarUsuario;
+        Usuario.findOne({
+            where: {
+                Matricula: matriculaBody
+            }
+        }).then(function (usuario) {
+            if (usuario != null) {                                                                // Se retorno usuario for null, usuario nao existe
+                if (usuario.isVerified) {                                                         // Verifica se a conta ja foi ativada
+                    try {
+                        bcrypt.compare(senhaBody, usuario.Senha, function (err, resposta) {       // Se a senha de entrada for igual a senha do db (encriptada), o login sera permitido, caso contrario, o login nao sera permitido
+                            if (resposta) {
+                                Usuario.update({
+                                    loggedin: true
+                                }, { where: { Matricula: matriculaBody } }).then(function () {
+                                    if(lembrarBody){
+                                        const loginToken = jwt.encode({
+                                            matriculaToken: matriculaBody,
+                                            senhaToken: senhaBody,
+                                            expire: Date.now() + (60 * 60 * 1000 * 24 * 7)                // Token configurado para expirar em 1 semana
+                                        }, chaveSecreta);
+                                        res.cookie("userData", loginToken);
+                                    }
+                                    res.json({ authorizedLogin: true });
+                                    // res.status(200).redirect('http://localhost:8080/home');
+                                }).catch(function (err) {
+                                    res.json(err);
+                                });
 
-                        } else {
-                            res.json({ authorizedLogin: false });
-                        }
-                    })
-                } catch (error) {
-                    res.json({ authorizedLogin: false });
+                            } else {
+                                res.json({ authorizedLogin: false });
+                                // res.status(401).redirect('http://localhost:8080/');
+                            }
+                        })
+                    } catch (error) {
+                        res.json({ authorizedLogin: false });
+                        // res.status(401).redirect(loginHost);
+                    }
+                } else {
+                    res.json({ loginError: "Conta nao verificada" });
                 }
             } else {
-                res.json({ loginError: "Conta nao verificada" });
+                res.json({ authorizedLogin: false, loginError: "Conta inexistente" });
             }
-        } else {
-            res.json({ loginError: "Conta inexistente" });
-        }
-    })
+        })
+    }
 }
 
 exports.logout = function (req, res) {
@@ -75,9 +82,10 @@ exports.logout = function (req, res) {
             Usuario.update({
                 loggedin: false
             }, { where: { Matricula: matriculaBody } }).then(function () {
+                // res.clearCookie('userData');
                 res.json({ loggedin: false });
             }).catch(function (err) {
-                res.json(err);
+                res.json({logoutError: 'Erro ao fazer logout'});
             });
         }
     })
