@@ -5,7 +5,7 @@ const jwt = require('jwt-simple');
 const saltRound = 10;
 const chaveSecreta = 'chavesecreta';                                              // Chave usada para gerar o token a ser validado no signup ou sendTokenAgain
 
-//dependencias: npm install bcrypt nodemailer jwt-simple
+//dependencias: npm install bcrypt nodemailer jwt-simple passport passport-local cookie-session
 module.exports = {
     create(req, res) {
         nomeBody = req.body.Nome;

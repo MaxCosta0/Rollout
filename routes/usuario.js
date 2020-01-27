@@ -13,5 +13,6 @@ router.post('/usuario/login', sessionController.login);
 router.post('/usuario/logout', sessionController.logout);
 router.post('/usuario/verifyToken/:token', sessionController.verifyToken);
 router.post('/usuario/sendTokenAgain', sessionController.sendTokenAgain);
+router.post('/usuario/teste', sessionController.teste);
 
 module.exports = router;

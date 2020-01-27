@@ -4,7 +4,6 @@ const nodemailer = require('nodemailer');
 const jwt = require('jwt-simple');
 const chaveSecreta = 'chavesecreta';                                              // Trocar a chaveSecreta
 const cookieParser = require('cookie-parser');
-
 const loginHost = 'http://localhost:8080/';
 
 exports.login = function (req, res) {
