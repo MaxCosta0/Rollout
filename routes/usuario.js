@@ -11,8 +11,7 @@ router.put('/usuario/:id/update', usuarioController.update);
 router.delete('/usuario/:id/delete',usuarioController.delete);
 router.post('/usuario/login', sessionController.login);
 router.post('/usuario/logout', sessionController.logout);
-router.post('/usuario/verifyToken/:token', sessionController.verifyToken);
+router.post('/usuario/verifyToken', sessionController.verifyToken);
 router.post('/usuario/sendTokenAgain', sessionController.sendTokenAgain);
-router.post('/usuario/teste', sessionController.teste);
 
 module.exports = router;

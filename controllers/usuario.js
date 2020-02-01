@@ -14,16 +14,26 @@ module.exports = {
         senhaBody = req.body.Senha;
         confirmarSenhaBody = req.body.ConfirmarSenha;
         selectDomain = req.body.selectDomain;                                           //AlgarMail ou other
+        // console.log(selectDomain)
         // console.log(nomeBody + matriculaBody + emailBody + senhaBody + confirmarSenhaBody)
         if((nomeBody || matriculaBody || emailBody || senhaBody || confirmarSenhaBody) == null){
             res.json({nullField: true});
-        }else if(selectDomain == "algarMail" && !emailBody.includes("@")){
-            emailBody+="@algartelecom.com.br";
-            // console.log(selectDomain);
-        }else if(selectDomain == "other" && !emailBody.includes("@")){
-            res.json({emailInvalido: true})
-        }else{
+            return;
+        }else if(selectDomain == "algarMail"){
+            if(emailBody.includes("@")){
+                var posDomainEmail = emailBody.indexOf("@");
+                var substringEmailBody = emailBody.substring(0, posDomainEmail)
+                emailBody = substringEmailBody + "@algartelecom.com.br"
+            }else{
+                emailBody+="@algartelecom.com.br";
+            }
+            // return;
+        }else if(selectDomain == "other"  && !emailBody.includes("@")){
+            res.json({emailInvalido: true});
+            return;
+        }
             // The 'Matricula' and 'Senha' fields will passsed to hash function 
+            console.log(emailBody)
             Usuario.findOne({                                                       //Verficando se ja existe cadastro com o numero de matricula de entrada
                 where: {
                     Matricula: req.body.Matricula
@@ -38,46 +48,48 @@ module.exports = {
                             Email: req.body.Email,
                             Senha: hash,
                             loggedin: false,
-                            isVerified: false
+                            isVerified: false,
+                            userType: "admin"
                         }).catch(function(err){
                             res.send(err);
                         });
                         // Credenciais de onde o token sera enviado
                         var transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: 'rolloutsystem@gmail.com',
-                            pass: 'Sistemarollout'
-                        }
+                            service: 'gmail',
+                            auth: {
+                                user: 'rolloutsystem@gmail.com',
+                                pass: 'Sistemarollout'
+                            }
                         });
-                        
+        
                         // token expirara em 24 horas
-                        hostVerify = 'localhost:3000/usuario/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
+                        hostVerify = 'localhost:8080/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
                         const token = jwt.encode({
-                            Nome: req.body.Nome,
-                            Matricula: req.body.Matricula,
-                            Email: req.body.Email,
+                            Nome: nomeBody,
+                            Matricula: matriculaBody,
+                            Email: emailBody,
                             Senha: hash,
                             expire: Date.now() + (60 * 60 * 1000)                // Token configurado para expirar em 1 hora
                         }, chaveSecreta);
-
+                        console.log(token)
                         // Corpo do email de verificacao
+        
                         var mailOptions = {
                             from: 'rolloutsystem@gmail.com',
-                            to: req.body.Email,
-                            subject: 'Email verification',
+                            to: emailBody,
+                            subject: 'Verificação da conta/Rollout System',
                             text : 'Visite esse link para verificar a sua conta: http://' + hostVerify + token,
-                            html : '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://'+hostVerify+''+token+'"><h2>Verify your account</h2></a>'
+                            html : '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://'+hostVerify+''+token+'"><h2>Clique aqui para verificar a sua conta</h2></a>'
                         }
+                      
                         // Enviar email
-                        // transporter.sendMail(mailOptions,function(error,info){
-                        //     if(error){
-                        //         res.json({emailEnviado: false});
-                        //     }else{
-                        //         res.json({emailEnviado : true});
-                        //     }
-                        // });
-                        res.json({emailEnviado: true});
+                        transporter.sendMail(mailOptions, function (error, info) {
+                            if (error) {
+                                res.json({ emailEnviado: false });
+                            } else {
+                                res.json({ emailEnviado: true });
+                            }
+                        });
                     }else{
                         res.json({senhasDiferentes: true});
                     }
@@ -85,7 +97,7 @@ module.exports = {
                     res.json({ usuarioExistente: true });
                 }
             });
-        }
+        
     },
 
     findOne(req, res) {
@@ -143,7 +155,7 @@ const sendToken = function (user) {
     });
 
     // token expirara em 24 horas
-    hostVerify = 'localhost:3000/usuario/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
+    hostVerify = 'localhost:3880/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
     const { Nome, Matricula, Email, Senha } = user
     const token = jwt.encode({
         Nome, Matricula, Email, Senha,
@@ -151,13 +163,12 @@ const sendToken = function (user) {
     }, chaveSecreta)
 
     // Corpo do email de verificacao
-    const mailOptions = {
+    var mailOptions = {
         from: 'rolloutsystem@gmail.com',
-        to: Email,
-        subject: 'Email verification',
-        text: 'Visite esse link para verificar a sua conta: http://' + hostVerify + token,
-        html: '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://'
-            + hostVerify + '' + token + '"><h2>Verify your account</h2></a>'
+        to: req.body.Email,
+        subject: 'Verificação da conta/Rollout System',
+        text : 'Visite esse link para verificar a sua conta: http://' + hostVerify + token,
+        html : '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://'+hostVerify+''+token+'"><h2>Clique aqui para verificar a sua conta</h2></a>'
     }
     // Enviar email
     transporter.sendMail(mailOptions, function (error, info) {

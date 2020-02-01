@@ -14,7 +14,7 @@ exports.login = function (req, res) {
         if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
             res.json({ authorizedLogin: true, loginType: 'token' });
         } else {
-            res.json({ error: "Token expirado" });
+            res.json({ authorizedLogin: false, loginError: "Token expirado" });
         }
     }else{                                                                                        // Se nao possui o cookie, faz a verificacao por meio dos campos passados pelo fron-end
         // nomeBody = req.body.Nome;
@@ -59,7 +59,7 @@ exports.login = function (req, res) {
                         // res.status(401).redirect(loginHost);
                     }
                 } else {
-                    res.json({ loginError: "Conta nao verificada" });
+                    res.json({ authorizedLogin: false, loginError: "Conta não verificada" });
                 }
             } else {
                 res.json({ authorizedLogin: false, loginError: "Conta inexistente" });
@@ -91,9 +91,12 @@ exports.logout = function (req, res) {
 }
 
 exports.sendTokenAgain = function (req, res) {
-    nomeBody = req.body.Nome;
+    // nomeBody = req.body.Nome;
+    // matriculaBody = req.body.Matricula;
+    // emailBody = req.body.Email;
+    // senhaBody = req.body.Senha;
+
     matriculaBody = req.body.Matricula;
-    emailBody = req.body.Email;
     senhaBody = req.body.Senha;
 
     Usuario.findOne({
@@ -115,22 +118,25 @@ exports.sendTokenAgain = function (req, res) {
                 });
 
                 // token expirara em 24 horas
-                hostVerify = 'localhost:3000/usuario/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
+                hostVerify = 'localhost:8080/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
                 const token = jwt.encode({
-                    Nome: nomeBody,
+                    // Nome: nomeBody,
                     Matricula: matriculaBody,
-                    Email: emailBody,
+                    // Email: emailBody,
                     Senha: usuario.Senha,
                     expire: Date.now() + (60 * 60 * 1000)                // Token configurado para expirar em 1 hora
                 }, chaveSecreta);
+                console.log(token)
                 // Corpo do email de verificacao
+
                 var mailOptions = {
                     from: 'rolloutsystem@gmail.com',
-                    to: req.body.Email,
-                    subject: 'Email verification',
-                    text: 'Visite esse link para verificar a sua conta: http://' + hostVerify + token,
-                    html: '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://' + hostVerify + '' + token + '"><h2>Verify your account</h2></a>'
+                    to: usuario.Email,
+                    subject: 'Verificação da conta/Rollout System',
+                    text : 'Visite esse link para verificar a sua conta: http://' + hostVerify + token,
+                    html : '<a>Clique no link abaixo para verificar a sua conta (O link expira em 1 hora)</a><br><a href="http://'+hostVerify+''+token+'"><h2>Clique aqui para verificar a sua conta</h2></a>'
                 }
+              
                 // Enviar email
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
@@ -139,6 +145,7 @@ exports.sendTokenAgain = function (req, res) {
                         res.json({ emailEnviado: true });
                     }
                 });
+
             }
         } else {
             res.json({ loginError: "Conta inexistente" });
@@ -147,8 +154,9 @@ exports.sendTokenAgain = function (req, res) {
 }
 
 exports.verifyToken = function (req, res) {
-    var token = req.params.token;
+    var token = req.body.Token;
     var dataDecoded = jwt.decode(token, chaveSecreta);
+    console.log(dataDecoded.Matricula)
     if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
         Usuario.findOne({
             where: {
@@ -161,17 +169,17 @@ exports.verifyToken = function (req, res) {
                 Usuario.update({
                     isVerified: true
                 }, { where: { Matricula: dataDecoded.Matricula } }).then(function () {
-                    res.status(200).json('Conta verificada com sucesso.');
+                    res.status(200).json({contaVerificada: true});
                 }).catch(function (err) {
                     res.json(err);
                 });
-                usuario.save(function (update_error, update_data) {
-                    if (update_error) {
-                        res.json(update_error);
-                    } else {
-                        res.json({ result: 1 });
-                    }
-                });
+                // usuario.save(function (update_error, update_data) {
+                //     if (update_error) {
+                //         res.json(update_error);
+                //     } else {
+                //         res.json({ result: 1 });
+                //     }
+                // });
             }
         });
     } else {
