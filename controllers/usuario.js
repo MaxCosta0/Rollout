@@ -63,7 +63,7 @@ module.exports = {
                         });
         
                         // token expirara em 24 horas
-                        hostVerify = 'localhost:8080/verifyToken/';       //Quando aplicacao estiver em producao, trocar esse host
+                        hostVerify = 'localhost:8080/verifyToken/q?authToken=';       //Quando aplicacao estiver em producao, trocar esse host
                         const token = jwt.encode({
                             Nome: nomeBody,
                             Matricula: matriculaBody,

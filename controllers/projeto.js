@@ -5,8 +5,10 @@ module.exports = {
     create(req, res) {
         const { Nome, Escopo, statusId } = req.body
         Projeto.create({ Nome, Escopo, statusId })
-            .then( projeto => res.json(projeto))
-            .catch( err => res.json(err))
+            .catch(function(err){
+                res.send(err);
+            })
+        res.json({createdProject: true});
     },
 
     findOne(req, res) {
@@ -34,9 +36,9 @@ module.exports = {
         Projeto.update({Nome, Escopo, statusId }, {where: {id}})
             .then( projeto => {
                 if (projeto[0] !== 0)
-                    res.status(200).json({ result: "Projeto atualizado com sucesso."})
+                    res.status(200).json({ updatedProject: true, result: "Projeto atualizado com sucesso."})
                 else
-                    res.status(200).json({ result: "Projeto não encontrado."})
+                    res.status(200).json({ updatedProject: false, result: "Projeto não encontrado."})
             })
             .catch( err => res.json(err))
     },
@@ -46,9 +48,9 @@ module.exports = {
         Projeto.destroy({where: {id}})
             .then( projeto => {
                 if (projeto !== 0)
-                    res.status(200).json({ result: "Projeto deletado com sucesso."})
+                    res.status(200).json({ delectedProject: true, result: "Projeto deletado com sucesso.", id: id})
                 else
-                    res.status(200).json({ result: "Projeto não encontrado."})
+                    res.status(200).json({ delectedProject: false, result: "Projeto não encontrado."})
             })
             .catch( err => res.json(err))
     }

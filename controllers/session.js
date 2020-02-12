@@ -140,6 +140,7 @@ exports.sendTokenAgain = function (req, res) {
                 // Enviar email
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
+                        console.log(token)
                         res.json({ emailEnviado: false });
                     } else {
                         res.json({ emailEnviado: true });
@@ -155,8 +156,11 @@ exports.sendTokenAgain = function (req, res) {
 
 exports.verifyToken = function (req, res) {
     var token = req.body.Token;
-    var dataDecoded = jwt.decode(token, chaveSecreta);
-    console.log(dataDecoded.Matricula)
+    if(!token){
+        res.json({ contaVerificada: false, authError: "Não existe token"})
+    }
+    var dataDecoded = jwt.decode(token, chaveSecreta, true);
+    // console.log(dataDecoded.Matricula)
     if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
         Usuario.findOne({
             where: {
@@ -164,7 +168,7 @@ exports.verifyToken = function (req, res) {
             }
         }).then(function (usuario) {
             if (!usuario) {
-                res.json({ error: "User error", errorType: "Usuario nao encontrado" });
+                res.json({ contaVerificada: false, authError: "Usuario não encontrado" });
             } else {
                 Usuario.update({
                     isVerified: true
@@ -183,6 +187,6 @@ exports.verifyToken = function (req, res) {
             }
         });
     } else {
-        res.json({ error: "Link expirado" });
+        res.json({ contaVerificada: false, authError: "Link expirado" });
     }
 }
