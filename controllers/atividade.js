@@ -5,8 +5,10 @@ module.exports = {
     create(req, res) {
         const { Nome, Escopo, Tipo, estacaoId, statusId } = req.body
         Atividade.create({ Nome, Escopo, Tipo, estacaoId, statusId })
-            .then( atividade => res.json(atividade))
-            .catch( err => res.json(err))
+            .catch(function(err){
+                res.send(err);
+            })
+        res.json({atividadeCriada: true})
     },
 
     findOne(req, res) {
@@ -34,9 +36,9 @@ module.exports = {
         Atividade.update({ Nome, Escopo, Tipo, estacaoId, statusId }, {where: {id}})
             .then( atividade => {
                 if (atividade[0] !== 0)
-                    res.status(200).json({ result: "Atividade atualizada com sucesso."})
+                    res.status(200).json({ atividateUpdate: true, result: "Atividade atualizada com sucesso."})
                 else
-                    res.status(200).json({ result: "Atividade não encontrada."})
+                    res.status(200).json({ atividateUpdate: false, result: "Atividade não encontrada."})
             })
             .catch( err => res.json(err))
     },
@@ -46,9 +48,9 @@ module.exports = {
         Atividade.destroy({where: {id}})
             .then( atividade => {
                 if (atividade !== 0)
-                    res.status(200).json({ result: "Atividade deletada com sucesso."})
+                    res.status(200).json({ atividadeDeletada: true, result: "Atividade deletada com sucesso."})
                 else
-                    res.status(200).json({ result: "Atividade não encontrada."})
+                    res.status(200).json({ atividadeDeletada: false, result: "Atividade não encontrada."})
             })
             .catch( err => res.json(err))
     }

@@ -197,6 +197,7 @@ CREATE TABLE `usuario` (
   `Matricula` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Senha` varchar(255) NOT NULL,
+  `SenhaTemp` varchar(255),
   `userType` varchar(255) NOT NULL,
   `loggedin` boolean NOT NULL,
   'isVerified' boolean NOT NULL,

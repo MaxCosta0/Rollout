@@ -7,7 +7,8 @@ const Usuario = db.sequelize.define('usuario', {
     Senha: {type: db.Sequelize.STRING, allowNull: false},
     isVerified: {type: db.Sequelize.BOOLEAN, allowNull: false},
     loggedin: {type: db.Sequelize.BOOLEAN, allowNull: false},
-    userType: {type: db.Sequelize.STRING, allowNull: false}
+    userType: {type: db.Sequelize.STRING, allowNull: false},
+    SenhaTemp: {type: db.Sequelize.STRING, allowNull: true}
 }, {
     freezeTableName: true
 });

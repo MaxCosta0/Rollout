@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jwt-simple');
 const chaveSecreta = 'chavesecreta';                                              // Trocar a chaveSecreta
 const cookieParser = require('cookie-parser');
+const saltRound = 10;
 const loginHost = 'http://localhost:8080/';
 
 exports.login = function (req, res) {
@@ -189,4 +190,107 @@ exports.verifyToken = function (req, res) {
     } else {
         res.json({ contaVerificada: false, authError: "Link expirado" });
     }
+}
+
+exports.redefinirSenha = function (req, res) {
+    let matriculaRedefine = req.body.Matricula;
+    let emailRedefine = req.body.Email;
+    // var senhaBody = req.body.Senha;
+
+    Usuario.findOne({
+        where: {
+            Matricula: matriculaRedefine
+        }
+    }).then(function(usuario){
+        if(usuario != null){
+            if(usuario.Email == emailRedefine){
+                // res.json({contaEncontrada: true});
+                let randomString = '';
+                let randomNumber;
+                //generate random string
+                for(var i = 0; i < 12; i++){
+                    if(i % 3 == 0){
+                        randomNumber = Math.floor(Math.random() * (91 - 65) ) + 65;
+                        randomString += String.fromCharCode(randomNumber);
+                    }else if(i % 3 == 1){
+                        randomNumber = Math.floor(Math.random() * (47 - 33) ) + 33;
+                        randomString += String.fromCharCode(randomNumber);
+                    }else if(i % 3 == 2){
+                        randomNumber = Math.floor(Math.random() * (122 - 97) ) + 97;
+                        randomString += String.fromCharCode(randomNumber);
+                    }
+                }
+                // res.json({emailEnviado: true})
+                // res.json({randomString: randomString});
+                
+                Usuario.update({
+                    SenhaTemp: randomString
+                }, { where: { Matricula: matriculaRedefine } })
+                .catch(function (err) {
+                    res.json({emailEnviado: false});
+                });
+
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'rolloutsystem@gmail.com',
+                        pass: 'Sistemarollout'
+                    }
+                });
+
+                var mailOptions = {
+                    from: 'rolloutsystem@gmail.com',
+                    to: usuario.Email,
+                    subject: 'Redefinição de senha / Rollout System',
+                    text : 'A sua senha temporária é: ' + randomString,
+                }
+            
+                // Enviar email
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(token)
+                        res.json({ emailEnviado: false });
+                    } else {
+                        res.json({ emailEnviado: true });
+                    }
+                });
+            }else{
+                res.json({usuarioEncontrado: true, emailEncontrado: false})
+            }
+        }else{
+            res.json({usuarioEncontrado: false, emailEncontrado: false})
+        }
+    })
+}
+
+exports.redefinirSenhaConfirm = function (req, res){
+    var matriculaRedefine = req.body.Matricula;
+    var senhaEnviada = req.body.SenhaEnviada;
+    var newSenha = req.body.NewSenha;
+    var confirmNewSenha = req.body.ConfirmNewSenha;
+    console.log(matriculaRedefine)
+    Usuario.findOne({
+        where: {
+            Matricula: matriculaRedefine
+        }
+    }).then(function(usuario){
+        if(usuario != null){
+            if(usuario.SenhaTemp == senhaEnviada){
+                if(newSenha == confirmNewSenha){
+                    var hash = bcrypt.hashSync(newSenha, saltRound);
+                    Usuario.update({
+                        Senha: hash
+                    }, { where: { Matricula: matriculaRedefine } })
+                    .catch(function (err) {
+                        res.json({redefineSenha: false, errorType: "Erro na atualizacao no DB. Contacte o adminstrador do sistema."});
+                    });
+                    res.json({redefineSenha: true});
+                }else{
+                    res.json({redefineSenha: false, errorType: "Nova senha e Confirmar nova senha diferentes"})
+                }
+            }else{
+                res.json({redefineSenha: false, errorType: "A senha enviada incorreta"});
+            }
+        }
+    })
 }
