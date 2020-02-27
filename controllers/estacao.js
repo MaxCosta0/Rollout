@@ -19,10 +19,14 @@ module.exports = {
     },
     
     findAll(req, res) {
-        const limit = 10; 
+        const limit = 10;
         const offset = (parseInt(req.params.page) - 1) * limit;
+        var projetoId = req.params.projetoId;
 
         Estacao.findAll({
+            where: {
+                projetoId: projetoId
+            },
             offset,
             limit
         })

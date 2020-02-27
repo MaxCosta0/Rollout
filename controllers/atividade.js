@@ -21,8 +21,12 @@ module.exports = {
     findAll(req, res) {
         const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
+        var estacaoId = req.params.estacaoId;
 
         Atividade.findAll({
+            where:{
+                estacaoId: estacaoId
+            },
             offset,
             limit
         })
