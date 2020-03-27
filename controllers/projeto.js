@@ -21,12 +21,23 @@ module.exports = {
     findAll(req, res) {
         const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
-
-        Projeto.findAll({
-            offset,
-            limit
-        })
-            .then( projetos => res.json(projetos))
+        var totalPage
+        
+        Projeto.findAll()
+            .then( projetos => {
+                totalPage = (Math.ceil(projetos.length/limit))
+                Projeto.findAll({
+                    offset,
+                    limit
+                })
+                    .then( projetos1 => {
+                        console.log("teste")
+                        // let totalPage = (Math.ceil(projetos.length/limit))
+                        var dataPage = {totalPage: totalPage};
+                        var obj = Object.assign({}, projetos1, dataPage);
+                        res.json(obj)
+                    })
+            })
             .catch( err => res.json(err))
     },
 

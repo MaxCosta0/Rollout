@@ -44,7 +44,7 @@ exports.login = function (req, res) {
                                         }, chaveSecreta);
                                         res.cookie("userData", loginToken);
                                     }
-                                    res.json({ authorizedLogin: true });
+                                    res.json({ authorizedLogin: true, user: usuario.Nome });
                                     // res.status(200).redirect('http://localhost:8080/home');
                                 }).catch(function (err) {
                                     res.json(err);

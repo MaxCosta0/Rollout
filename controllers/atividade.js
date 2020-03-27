@@ -22,6 +22,7 @@ module.exports = {
         const limit = 10; 
         const offset = (parseInt(req.params.page) - 1) * limit;
         var estacaoId = req.params.estacaoId;
+        var length;
 
         Atividade.findAll({
             where:{
@@ -30,7 +31,21 @@ module.exports = {
             offset,
             limit
         })
-            .then( atividades => res.json(atividades))
+            .then( atividades => {
+                Atividade.findAll({
+                    where:{
+                        estacaoId: estacaoId
+                    }
+                })
+                .then(atividades1 => {
+                    length = atividades1.length
+                    atividades.push(obj)
+                    let totalPage = Math.ceil(length / limit)
+                    var dataPage = {totalPage: totalPage}
+                    var obj  = Object.assign({}, atividades, dataPage)
+                    res.json(obj)
+                })
+            })
             .catch( err => res.json(err))
     },
 
