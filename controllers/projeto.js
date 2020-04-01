@@ -31,7 +31,6 @@ module.exports = {
                     limit
                 })
                     .then( projetos1 => {
-                        console.log("teste")
                         // let totalPage = (Math.ceil(projetos.length/limit))
                         var dataPage = {totalPage: totalPage};
                         var obj = Object.assign({}, projetos1, dataPage);

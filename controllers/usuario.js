@@ -115,6 +115,18 @@ module.exports = {
         });
     },
 
+    usuarioNotVerified(req, res){
+        Usuario.findAll({
+            where: {
+                isVerifiedByAdmin: false,
+            }
+        }).then(function(usuarios){
+            res.send(usuarios);
+        }).catch(function(err){
+            res.send(err);
+        });
+    },
+
     update(req, res) {
         const { Nome, Matricula, Email, Senha } = req.body
         const { id } = req.params
@@ -126,6 +138,24 @@ module.exports = {
                     res.status(200).json({ result: "Usuário atualizado com sucesso." })
                 else
                     res.status(200).json({ result: "Usuário não encontrado." })
+            })
+            .catch(err => res.json(err))
+    },
+
+    verifyByAdmin(req, res){
+        const { id, chooseStatusVerify } = req.body;
+        Usuario.update({ isVerifiedByAdmin: true, refusedByAdmin: !chooseStatusVerify },
+            { where: { id } })
+            .then(usuario => {
+                if (usuario[0] !== 0)
+                    if(!chooseStatusVerify == 0){
+                        res.status(200).json({ usuarioVerificado: true, result: "Registro aceito." })    
+                    }else{
+                        res.status(200).json({ usuarioVerificado: true, result: "Registro recusado" })
+                    }
+                    // res.status(200).json({ usuarioVerificado: true, result: "Registro atualizado com sucesso." })
+                else
+                    res.status(200).json({ usuarioVerificado: false, result: "Usuário não encontrado." })
             })
             .catch(err => res.json(err))
     },

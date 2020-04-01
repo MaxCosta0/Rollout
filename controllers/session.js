@@ -44,7 +44,7 @@ exports.login = function (req, res) {
                                         }, chaveSecreta);
                                         res.cookie("userData", loginToken);
                                     }
-                                    res.json({ authorizedLogin: true, user: usuario.Nome });
+                                    res.json({ authorizedLogin: true, user: usuario.Nome, userType: usuario.userType });
                                     // res.status(200).redirect('http://localhost:8080/home');
                                 }).catch(function (err) {
                                     res.json(err);
@@ -67,6 +67,29 @@ exports.login = function (req, res) {
             }
         })
     }
+}
+
+exports.checkLogin = function(req, res){
+    matriculaBody = req.body.Matricula;
+    senhaBody = req.body.Senha;
+    Usuario.findOne({
+        where: {
+            Matricula: matriculaBody,
+            userType: "admin",
+        }
+    }).then(function (usuario) {
+        try {
+            bcrypt.compare(senhaBody, usuario.Senha, function (err, resposta) {       // Se a senha de entrada for igual a senha do db (encriptada), o login sera permitido, caso contrario, o login nao sera permitido
+                if (resposta) {                       
+                    res.json({ authorizedLogin: true });
+                } else {
+                    res.json({ authorizedLogin: false, authError: "Matricula ou senha incorretos" });
+                }
+            })
+        } catch (error) {
+            res.json({ authorizedLogin: false, authError: "Usuário não tem permissão. Contacte o adminstrador do sistema para mais informações." });
+        }
+    })
 }
 
 exports.logout = function (req, res) {
@@ -157,38 +180,35 @@ exports.sendTokenAgain = function (req, res) {
 
 exports.verifyToken = function (req, res) {
     var token = req.body.Token;
+    var segments = token.split('.');
     if(!token){
         res.json({ contaVerificada: false, authError: "Não existe token"})
+    }else if(segments.length !== 3){
+        res.json({contaVerificada: false, authError: "Token Inválido"})
     }
-    var dataDecoded = jwt.decode(token, chaveSecreta, true);
-    // console.log(dataDecoded.Matricula)
-    if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
-        Usuario.findOne({
-            where: {
-                Matricula: dataDecoded.Matricula
-            }
-        }).then(function (usuario) {
-            if (!usuario) {
-                res.json({ contaVerificada: false, authError: "Usuario não encontrado" });
-            } else {
-                Usuario.update({
-                    isVerified: true
-                }, { where: { Matricula: dataDecoded.Matricula } }).then(function () {
-                    res.status(200).json({contaVerificada: true});
-                }).catch(function (err) {
-                    res.json(err);
-                });
-                // usuario.save(function (update_error, update_data) {
-                //     if (update_error) {
-                //         res.json(update_error);
-                //     } else {
-                //         res.json({ result: 1 });
-                //     }
-                // });
-            }
-        });
-    } else {
-        res.json({ contaVerificada: false, authError: "Link expirado" });
+    else{
+        var dataDecoded = jwt.decode(token, chaveSecreta, true);
+        if (new Date(dataDecoded.expire) > new Date()) {          // Se data do token for maior que a data atual, token ainda e valido
+            Usuario.findOne({
+                where: {
+                    Matricula: dataDecoded.Matricula
+                }
+            }).then(function (usuario) {
+                if (!usuario) {
+                    res.json({ contaVerificada: false, authError: "Usuario não encontrado" });
+                } else {
+                    Usuario.update({
+                        isVerified: true
+                    }, { where: { Matricula: dataDecoded.Matricula } }).then(function () {
+                        res.status(200).json({contaVerificada: true});
+                    }).catch(function (err) {
+                        res.json(err);
+                    });
+                }
+            });
+        } else {
+            res.json({ contaVerificada: false, authError: "Token expirado" });
+        }
     }
 }
 
@@ -292,5 +312,16 @@ exports.redefinirSenhaConfirm = function (req, res){
                 res.json({redefineSenha: false, errorType: "A senha enviada incorreta"});
             }
         }
+    })
+}
+
+exports.checkUserType = function(req, res){
+    const { Matricula } = req.body;
+    Usuario.findOne({
+        where: {
+            Matricula: Matricula
+        }
+    }).then(function(usuario){
+        res.send(usuario.userType)
     })
 }

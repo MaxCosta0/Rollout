@@ -200,7 +200,9 @@ CREATE TABLE `usuario` (
   `SenhaTemp` varchar(255),
   `userType` varchar(255) NOT NULL,
   `loggedin` boolean NOT NULL,
-  'isVerified' boolean NOT NULL,
+  `isVerified` boolean NOT NULL,
+  `isVerifiedByAdmin` boolean NOT NULL,
+  `refusedByAdmin` boolean NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`)

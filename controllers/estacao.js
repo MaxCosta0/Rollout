@@ -38,11 +38,11 @@ module.exports = {
                     }
                 })
                 .then(estacoes1 => {
-                    length = estacoes1.length
-                    estacoes.push(obj)
+                    length = estacoes1.length;
+                    let estacaoQtdCurrentPage = {estacaoQtdCurrentPage: estacoes.length};
                     let totalPage = Math.ceil(length / limit)
                     var dataPage = {totalPage: totalPage}
-                    var obj  = Object.assign({}, estacoes, dataPage)
+                    var obj  = Object.assign({}, estacoes, dataPage, estacaoQtdCurrentPage)
                     res.json(obj)
                 })
             })
