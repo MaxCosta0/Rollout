@@ -325,3 +325,52 @@ exports.checkUserType = function(req, res){
         res.send(usuario.userType)
     })
 }
+
+exports.checkByAdmin = function(req, res){
+    Usuario.findAll({
+        where: {
+            userType: 'default',
+        }
+    }).then(function(usuarios){
+        res.send(usuarios);
+    }).catch(function(err){
+        res.send(err);
+    });
+}
+
+exports.updateUserType = function(req, res){
+    var { id, userType, currentUserId, userToBeChanged } = req.body;
+    console.log(userToBeChanged)
+    console.log(currentUserId)
+    if(currentUserId == userToBeChanged){
+        res.send({userUpdated: false, result: "Não é possivel alterar os privilégios desta conta. Contacte outro administrador do sistema para mais informações."});
+    }else{
+        Usuario.findOne({
+            where: {
+                id: id
+            }
+        }).then(function(usuario){
+            if(userType == 0 && usuario.userType != "admin"){
+                Usuario.update({ userType: "admin" },
+                    { where: { id } })
+                    .then(usuario => {
+                        if (usuario[0] !== 0)
+                            res.status(200).json({ userUpdated: true, result: "Usuário atualizado com sucesso." })
+                        else
+                            res.status(200).json({ userUpdated: false, result: "Usuário não encontrado." })
+                    })
+                    .catch(err => res.json(err))
+            }else if(userType == 1 && usuario.userType != "default"){
+                Usuario.update({ userType: "default" },
+                    { where: { id } })
+                    .then(usuario => {
+                        if (usuario[0] !== 0)
+                            res.status(200).json({ userUpdated: true, result: "Usuário atualizado com sucesso." })
+                        else
+                            res.status(200).json({ userUpdated: false, result: "Usuário não encontrado." })
+                    })
+                    .catch(err => res.json(err))
+            }
+        })
+    }
+}

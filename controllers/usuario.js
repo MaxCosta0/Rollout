@@ -49,7 +49,7 @@ module.exports = {
                             Senha: hash,
                             loggedin: false,
                             isVerified: false,
-                            userType: "admin"
+                            userType: "default"
                         }).catch(function(err){
                             res.send(err);
                         });
